@@ -1,0 +1,15 @@
+.title::after {
+    content: "";
+    width: 60px;
+    height: 2px;
+    background: #222;
+    left: 0;
+    bottom: 15px;
+    position: absolute;
+}
+
+.blog-tag ul li.active button {
+    border-color: #1565c0;
+    background-color: #1565c0;
+    color: white;
+}
