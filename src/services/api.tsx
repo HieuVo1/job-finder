@@ -1,9 +1,14 @@
 import axios from "axios";
 import TokenService from "./TokenService";
 
-const baseApi = "https://localhost:7093/api";
+const baseApi = "http://localhost:5102/api";
+const itendityApi = "http://localhost:5102/api";
 
-const HttpClient = axios.create({
+export const IdentityHttpClient = axios.create({
+    baseURL: itendityApi,
+});
+
+ const HttpClient = axios.create({
     baseURL: baseApi,
 });
 
