@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useSelector } from "react-redux";
 import { initialUser, selectUser } from "../redux/userSlice";
 import { Roles } from "../pages/register/Register.api";
@@ -28,12 +28,21 @@ function HomeCards() {
                         List your job to find the perfect developer for the role
                     </p>
                     {user !== initialUser && user.role === Roles.Admin && (
-                        <Link
-                            to='/add-job'
-                            className='inline-block bg-indigo-500 text-white rounded-lg px-4 py-2 hover:bg-indigo-600'
-                        >
-                            Add Job
-                        </Link>
+                        <>
+                            <Link
+                                to='/add-job'
+                                className='inline-block bg-indigo-500 text-white rounded-lg px-4 py-2 mr-3 hover:bg-indigo-600'
+                            >
+                                Add Job
+                            </Link>
+
+                            <Link
+                                to='/add-blog'
+                                className='inline-block bg-indigo-500 text-white rounded-lg px-4 py-2 hover:bg-indigo-600'
+                            >
+                                Add Blog
+                            </Link>
+                        </>
                     )}
                 </div>
             </div>

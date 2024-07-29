@@ -1,10 +1,10 @@
 import { AxiosResponse } from "axios";
-import { BaseResponse } from "../../data/base-response";
-import HttpClient from "../../services/api";
-import { ConvertToBaseError } from "../jobs/job.api";
-import { PaginatedResult } from "../../data/paginated-result";
-import { Blog } from "../../data/blog";
-import { ListRequest } from "../../data/list-request";
+import { ListRequest } from "../data/list-request";
+import { BaseResponse } from "../data/base-response";
+import { PaginatedResult } from "../data/paginated-result";
+import { Blog } from "../data/blog";
+import HttpClient, { ConvertToBaseError } from "./api";
+
 
 export const getAllBlogAsync = async (
   requestParams: ListRequest,
@@ -13,7 +13,7 @@ export const getAllBlogAsync = async (
 ) => {
   try {
     const data: AxiosResponse<BaseResponse<PaginatedResult<Blog>>> =
-      await HttpClient.get(`http://localhost:5074/api/blogs`, {
+      await HttpClient.get(`/blogs`, {
         params: {
           ...requestParams,
           tags,
@@ -29,7 +29,7 @@ export const getAllBlogAsync = async (
 export const getBlogByIdAsync = async (blogId: number) => {
   try {
     const data: AxiosResponse<BaseResponse<Blog>> = await HttpClient.get(
-      `http://localhost:5074/api/blogs/${blogId}`
+      `/blogs/${blogId}`
     );
     return data.data;
   } catch (error) {
@@ -40,7 +40,7 @@ export const getBlogByIdAsync = async (blogId: number) => {
 export const getBlogTagsAsync = async () => {
   try {
     const data: AxiosResponse<BaseResponse<string[]>> = await HttpClient.get(
-      `http://localhost:5074/api/blogs/get-tags`
+      `/blogs/get-tags`
     );
     return data.data;
   } catch (error) {
@@ -51,7 +51,7 @@ export const getBlogTagsAsync = async () => {
 export const AddBlogAsync = async (blog: Blog) => {
   try {
     const data: AxiosResponse<BaseResponse<Blog>> = await HttpClient.post(
-      `http://localhost:5074/api/blogs`,
+      `/blogs`,
       blog
     );
     return data.data;

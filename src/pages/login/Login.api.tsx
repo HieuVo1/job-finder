@@ -1,8 +1,7 @@
 import { AxiosResponse } from "axios";
 import { BaseResponse } from "../../data/base-response";
-import HttpClient, { IdentityHttpClient } from "../../services/api";
+import HttpClient, { ConvertToBaseError, IdentityHttpClient } from "../../services/api";
 import { UserData } from "../register/Register.api";
-import { ConvertToBaseError } from "../jobs/job.api";
 export interface TokenInfo {
   token?: string;
   expireIn?: number;
@@ -26,7 +25,7 @@ export const loginAsync = async (loginPayload: LoginPayload) => {
 export const GetUserById = async () => {
   try {
     const data: AxiosResponse<BaseResponse<UserData>> = await HttpClient.get(
-      "/users/get-by-id"
+      "/users"
     );
     return data.data;
   } catch (error) {

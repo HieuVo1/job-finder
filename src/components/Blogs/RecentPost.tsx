@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Blog } from "../../../data/blog";
-import { getAllBlogAsync } from "../blog.api";
-import { ListRequest } from "../../../data/list-request";
+import { Blog } from "../../data/blog";
+import { getAllBlogAsync } from "../../services/blog.api";
+import { ListRequest } from "../../data/list-request";
 
 function RecentPost() {
   const [blogs, setBlogs] = useState<Blog[]>([]);

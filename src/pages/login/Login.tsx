@@ -3,16 +3,21 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import TokenService, { tokenKey } from "../../services/TokenService";
 import { setHttpClientHeader } from "../../services/api";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { TextField } from "@mui/material";
 
 function Login() {
   const navigate = useNavigate();
 
   const {
-    register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<LoginPayload>();
+    control,
+  } = useForm<LoginPayload>({
+    defaultValues: {
+      username: '',
+      password: ''
+    }
+  });
 
   const onSubmit = async (data: LoginPayload) => {
     const response = await loginAsync(data);
@@ -34,35 +39,50 @@ function Login() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <h2 className="text-3xl text-center font-semibold mb-6">Login</h2>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Enter your username
-              </label>
-              <input
-                type="text"
-                {...register("username", { required: true })}
-                className="border rounded w-full py-2 px-3 mb-2"
+              <Controller
+                name="username"
+                rules={{ required: 'Username is required' }}
+                control={control}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <TextField
+                    helperText={error ? error.message : null}
+                    error={!!error}
+                    onChange={onChange}
+                    value={value}
+                    fullWidth
+                    label="Username"
+                    variant="outlined"
+                  />
+                )}
               />
-              {errors.username?.type === "required" && (
-                <p className="text-red-600" role="alert">
-                  Username is required
-                </p>
-              )}
             </div>
+
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">
-                Enter your password
-              </label>
-              <input
-                type="password"
-                {...register("password", { required: true })}
-                className="border rounded w-full py-2 px-3 mb-2"
+              <Controller
+                name="password"
+                rules={{ required: 'Password is required' }}
+                control={control}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <TextField
+                    helperText={error ? error.message : null}
+                    error={!!error}
+                    onChange={onChange}
+                    value={value}
+                    fullWidth
+                    type="password"
+                    label="Password"
+                    variant="outlined"
+                  />
+                )}
               />
-              {errors.password?.type === "required" && (
-                <p className="text-red-600" role="alert">
-                  Password is required
-                </p>
-              )}
             </div>
+
             <div>
               <button
                 className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline"

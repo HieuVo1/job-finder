@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { DeleteJob, GetJob } from "./job.api";
-import { Job } from "../../data/job";
+import { Job, JobTypes } from "../../data/job";
 import { Box, CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { initialUser, selectUser } from "../../redux/userSlice";
 import { Roles } from "../register/Register.api";
+import { DeleteJobAsync, GetJobByIdAsync } from "../../services/job.api";
 
 function JobPage() {
     const navigate = useNavigate();
@@ -17,10 +17,12 @@ function JobPage() {
 
     const user = useSelector(selectUser);
 
+    const JobTypeStrings = Object.values(JobTypes);
+
     useEffect(() => {
         const fetchJob = async () => {
             try {
-                const res = await GetJob(Number(id));
+                const res = await GetJobByIdAsync(Number(id));
                 if (res?.isSuccess)
                     setJob(res?.data);
                 else
@@ -42,7 +44,7 @@ function JobPage() {
         const confirm = window.confirm('Are you sure to delete this job');
         if (!confirm) return;
 
-        var res = await DeleteJob(id);
+        var res = await DeleteJobAsync(id);
         if (res?.isSuccess) {
             toast.success('Job deleted successfully');
             return navigate('/jobs');
@@ -73,7 +75,7 @@ function JobPage() {
                             <div className='grid grid-cols-1 md:grid-cols-70/30 w-full gap-6'>
                                 <main>
                                     <div className='bg-white p-6 rounded-lg shadow-md text-center md:text-left'>
-                                        <div className='text-gray-500 mb-4'>{job.type}</div>
+                                        <div className='text-gray-500 mb-4'>{JobTypeStrings[job.type]}</div>
                                         <h1 className='text-3xl font-bold mb-4'>{job.title}</h1>
                                         <div className='text-gray-500 mb-4 flex align-middle justify-center md:justify-start'>
                                             <p className='text-orange-700'>{job.location}</p>
@@ -100,22 +102,22 @@ function JobPage() {
                                     <div className='bg-white p-6 rounded-lg shadow-md'>
                                         <h3 className='text-xl font-bold mb-6'>Company Info</h3>
 
-                                        <h2 className='text-2xl'>{job.company.name}</h2>
+                                        <h2 className='text-2xl'>{job.company?.name}</h2>
 
-                                        <p className='my-2'>{job.company.description}</p>
+                                        <p className='my-2'>{job.company?.description}</p>
 
                                         <hr className='my-4' />
 
                                         <h3 className='text-xl'>Contact Email:</h3>
 
                                         <p className='my-2 bg-indigo-100 p-2 font-bold'>
-                                            {job.company.email}
+                                            {job.company?.email}
                                         </p>
 
                                         <h3 className='text-xl'>Contact Phone:</h3>
 
                                         <p className='my-2 bg-indigo-100 p-2 font-bold'>
-                                            {job.company.phone}
+                                            {job.company?.phone}
                                         </p>
                                     </div>
                                     {

@@ -1,8 +1,8 @@
-import './BlogSideBar.css';
-import RecentPost from '../recent-post/RecentPost';
-import SearchBar from '../search-bar/SearchBar';
-import BlogTag from '../blog-tag/BlogTag';
-import SortBar from '../sort-bar/SortBar';
+import SearchBar from './SearchBar';
+import BlogTag from './BlogTag';
+import RecentPost from './RecentPost';
+import './SideBar.css';
+import SortBar from './SortBar';
 
 function SideBar() {
     return (

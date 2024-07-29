@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material"
+import { FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material"
 import { useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -28,11 +28,11 @@ function SortBar() {
                 break;
             case SortItem.NewToOld:
                 searchParams.set('sortField', 'createdAt');
-                searchParams.set('sortOrder', 'ascend');
+                searchParams.set('sortOrder', 'descend');
                 break;
             case SortItem.OldToNew:
                 searchParams.set('sortField', 'createdAt');
-                searchParams.set('sortOrder', 'descend');
+                searchParams.set('sortOrder', 'ascend');
                 break;
 
             default:

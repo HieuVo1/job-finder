@@ -2,13 +2,15 @@ import { IconButton, InputBase, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import useDebounce from "../../../hooks/useDebouce";
+import useDebounce from "../../hooks/useDebounce";
 
 function SearchBar() {
   const [searchData, setSearchData] = useState("");
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  // 1:
+  // 1: ''
+  // 2 : 'c'
+  // 3: 'co'
   const debounceValue = useDebounce(searchData, 500);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -42,7 +44,7 @@ function SearchBar() {
         p: "2px 4px",
         height: "56px",
         display: "flex",
-        alignItems: "center",
+        alignItems: "center"
       }}
     >
       <InputBase
@@ -57,7 +59,7 @@ function SearchBar() {
         onClick={() => setSearchData(searchData)}
         type="button"
         sx={{ p: "10px" }}
-        aria-label="search"
+        aria-label="search blogs"
       >
         <SearchIcon />
       </IconButton>

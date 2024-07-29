@@ -3,7 +3,6 @@ import "react-quill/dist/quill.snow.css";
 import { Blog } from "../../data/blog";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/userSlice";
-import { AddBlogAsync, getBlogTagsAsync } from "./blog.api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,7 +14,8 @@ import {
 import { useEffect, useState } from "react";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import { FormInputText } from "../../components/FormTextInput";
+import ReactQuill from "react-quill";
+import { AddBlogAsync, getBlogTagsAsync } from "../../services/blog.api";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -28,7 +28,7 @@ function AddBlogPage() {
 
   const handChange = (
     event: React.SyntheticEvent,
-    value: Value | Array,
+    value: string[],
     reason: string,
     details?: AutocompleteChangeDetails<string>
   ) => {
@@ -53,7 +53,6 @@ function AddBlogPage() {
   const {
     handleSubmit,
     control,
-    formState: { errors },
   } = useForm<Blog>({
     defaultValues: {
       tags: [],
@@ -90,6 +89,7 @@ function AddBlogPage() {
             <div className="mb-4">
               <Controller
                 name="title"
+                rules={{ required: 'Title is required' }}
                 control={control}
                 render={({
                   field: { onChange, value },
@@ -108,26 +108,26 @@ function AddBlogPage() {
               />
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 ">
               <Controller
                 name="content"
+                rules={{ required: 'Content is required' }}
                 control={control}
                 render={({
                   field: { onChange, value },
                   fieldState: { error },
-                }) => (
-                  <TextField
-                    helperText={error ? error.message : null}
-                    error={!!error}
-                    onChange={onChange}
-                    value={value}
-                    fullWidth
-                    multiline
-                    rows={4}
-                    label="Content"
-                    variant="outlined"
-                  />
-                )}
+                }) => {
+                  return (
+                    <>
+                      <ReactQuill theme="snow" value={value} onChange={onChange} />
+                      {error?.type === 'required' && (
+                        <p className="text-red-600" role="alert">
+                          Content is required
+                        </p>
+                      )}
+                    </>
+                  )
+                }}
               />
             </div>
 
@@ -135,6 +135,7 @@ function AddBlogPage() {
               <Controller
                 name="summary"
                 control={control}
+                rules={{ required: 'Summary is required' }}
                 render={({
                   field: { onChange, value },
                   fieldState: { error },
@@ -154,26 +155,6 @@ function AddBlogPage() {
               />
             </div>
 
-            {/* <div className="mb-4">
-              <Controller
-                name="tags"
-                control={control}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    helperText={error ? error.message : null}
-                    error={!!error}
-                    onChange={onChange}
-                    value={value}
-                    fullWidth
-                    label="tags"
-                    variant="outlined"
-                  />
-                )}
-              />
-            </div> */}
             <div className="mb-4">
               <Autocomplete
                 fullWidth
@@ -207,6 +188,7 @@ function AddBlogPage() {
             <div className="mb-4">
               <Controller
                 name="backgroundUrl"
+                rules={{ required: 'Background image is required' }}
                 control={control}
                 render={({
                   field: { onChange, value },

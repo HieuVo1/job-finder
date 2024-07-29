@@ -1,6 +1,6 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { getBlogTagsAsync } from "../blog.api";
+import { useEffect, useState } from "react";
+import { getBlogTagsAsync } from "../../services/blog.api";
 
 function BlogTag() {
   const [searchParams] = useSearchParams();

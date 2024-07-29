@@ -1,6 +1,6 @@
-import BlogDetail from "./blog-detail/BlogDetail";
-import BlogTag from "./blog-tag/BlogTag";
-import RecentPost from "./recent-post/RecentPost";
+import BlogDetail from "../../components/Blogs/BlogDetail";
+import BlogTag from "../../components/Blogs/BlogTag";
+import RecentPost from "../../components/Blogs/RecentPost";
 
 function BlogDetailPage() {
   return (

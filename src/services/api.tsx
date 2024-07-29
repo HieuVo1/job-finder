@@ -1,14 +1,15 @@
 import axios from "axios";
 import TokenService from "./TokenService";
+import { BaseResponse } from "../data/base-response";
 
-const baseApi = "http://localhost:5102/api";
-const itendityApi = "http://localhost:5102/api";
+const baseApi = "https://localhost:7093/api";
+const identityApi = "https://localhost:7093/api";
 
 export const IdentityHttpClient = axios.create({
-    baseURL: itendityApi,
+    baseURL: identityApi,
 });
 
- const HttpClient = axios.create({
+const HttpClient = axios.create({
     baseURL: baseApi,
 });
 
@@ -24,3 +25,25 @@ export const clearHttpClientHeader = () => {
 setHttpClientHeader();
 
 export default HttpClient
+
+
+export function ConvertToBaseError<T>(error: any): BaseResponse<T> {
+    if (axios.isAxiosError(error) && error.response) {
+        if (error.response?.data === '') {
+            const newErrorRes: BaseResponse<T> = {
+                isSuccess: false,
+                errorMessage: error.message,
+            }
+            return newErrorRes;
+        }
+
+        return error.response?.data as BaseResponse<T>;
+    }
+    else {
+        const newErrorRes: BaseResponse<T> = {
+            isSuccess: false,
+            errorMessage: error
+        }
+        return newErrorRes;
+    }
+}

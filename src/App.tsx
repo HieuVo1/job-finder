@@ -1,4 +1,3 @@
-import "./App.css";
 import Login from "./pages/login/Login";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Register from "./pages/register/Register";
@@ -14,23 +13,40 @@ import BlogsPage from "./pages/blogs/BlogsPage";
 import BlogDetailPage from "./pages/blogs/BlogDetailPage";
 import AddBlogPage from "./pages/blogs/AddBlogPage";
 import TokenService from "./services/TokenService";
+import EditJobPage from "./pages/jobs/EditJobPage";
+import { useEffect, useState } from "react";
 
 function App() {
-  const IsAuthenticated = TokenService.IsAuthenticated();
+  const [IsAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(TokenService.IsAuthenticated());
+  }, [location]);
+
   return (
     <>
       <NavBar></NavBar>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/blogs" element={<BlogsPage></BlogsPage>}></Route>
-        <Route path="/add-blog" element={<AddBlogPage></AddBlogPage>}></Route>
+        <Route path="/add-blog" element={!IsAuthenticated ? (
+          <Navigate to="/login"></Navigate>
+        ) : (
+          <AddBlogPage />
+        )}></Route>
         <Route
           path="blogs/:blogId"
           element={<BlogDetailPage></BlogDetailPage>}
         ></Route>
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/jobs/:id" element={<JobPage />} />
-        {/* <Route path="/edit-job/:id" element={<EditJobPage />} loader={editPageDataLoader} /> */}
+        <Route path="/edit-job/:id" element={
+          !IsAuthenticated ? (
+            <Navigate to="/login"></Navigate>
+          ) : (
+            <EditJobPage />
+          )
+        } />
         <Route
           path="/add-job"
           element={

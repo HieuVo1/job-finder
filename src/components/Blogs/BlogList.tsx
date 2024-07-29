@@ -1,12 +1,11 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "./BlogList.css";
 import { useEffect, useRef, useState } from "react";
 import { CircularProgress, Pagination } from "@mui/material";
-import BlogCard from "../blog-card/BlogCard";
-import { Blog } from "../../../data/blog";
-import { getAllBlogAsync } from "../blog.api";
-import { defaultPageSize } from "../../../data/job";
-import { ListRequest } from "../../../data/list-request";
+import { Blog } from "../../data/blog";
+import { ListRequest } from "../../data/list-request";
+import { getAllBlogAsync } from "../../services/blog.api";
+import { defaultPageSize } from "../../data/job";
+import BlogCard from "./BlogCard";
 
 function BlogList() {
   const [blogs, setBlogs] = useState<Blog[]>([]);

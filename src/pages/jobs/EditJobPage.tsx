@@ -1,254 +1,330 @@
-// import { useEffect, useState } from "react";
-// import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-// import { Job, JobTypes } from "../../data/job";
-// import { GetJob } from "./job.api";
-// import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Job, JobTypes } from "../../data/job";
+import { toast } from "react-toastify";
+import { Controller, useForm } from "react-hook-form";
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { GetJobByIdAsync, UpdateJobAsync } from "../../services/job.api";
 
-// function EditJobPage() {
-//     const navigate = useNavigate();
-//     const job = useLoaderData();
+function EditJobPage() {
+    const navigate = useNavigate();
 
-//     const { id } = useParams();
-//     const [loading, setLoading] = useState(true);
+    const { id } = useParams();
+    const [loading, setLoading] = useState(true);
 
-//     const [title, setTitle] = useState(job.title);
-//     const [type, setType] = useState(JobTypes.FullTime);
-//     const [location, setLocation] = useState(job.location);
-//     const [description, setDescription] = useState(job.description);
-//     const [salary, setSalary] = useState('Under $50K');
-//     const [companyName, setCompanyName] = useState('');
-//     const [companyDescription, setCompanyDescription] = useState('');
-//     const [email, setContactEmail] = useState('');
-//     const [phone, setContactPhone] = useState('');
+    const { control, handleSubmit, setValue } = useForm<Job>({
+        defaultValues: {
+            type: JobTypes.FullTime,
+            title: '',
+            description: '',
+            location: '',
+            salary: '',
+            company: {
+                description: '',
+                email: '',
+                name: '',
+                phone: ''
+            }
+        }
+    });
 
-//     const options = Object.entries(JobTypes).map(([key, value]) => ({
-//         value,
-//         label: key,
-//     })).filter(o => typeof o.value === 'number');
+    useEffect(() => {
+        const getJob = async (id: number) => {
+            try {
+                setLoading(true);
+                const res = await GetJobByIdAsync(id);
+                setValue("id", res.data.id);
+                setValue("title", res.data.title);
+                setValue("location", res.data.location);
+                setValue("description", res.data.description);
+                setValue("salary", res.data.salary);
+                setValue("type", res.data.type);
+                setValue("company.description", res.data.company.description);
+                setValue("company.email", res.data.company.email);
+                setValue("company.name", res.data.company.name);
+                setValue("company.phone", res.data.company.phone);
+            } catch (error) {
+                console.log(error);
+            }
+            finally {
+                setLoading(false);
+            }
+        }
+        if (id)
+            getJob(parseInt(id));
+    }, [id]);
 
-//     const submitForm = async (e: any) => {
-//         e.preventDefault();
+    const options = Object.entries(JobTypes).map(([key, value]) => ({
+        value,
+        label: key,
+    })).filter(o => typeof o.value === 'number');
 
-//         const newJob = {
-//             title,
-//             type,
-//             location,
-//             description,
-//             salary,
-//             company: {
-//                 name: companyName,
-//                 description: companyDescription,
-//                 email,
-//                 phone,
-//             },
-//         };
+    const onSubmit = async (data: Job) => {
+        const response = await UpdateJobAsync(data);
 
-//         // var res = await AddJob(newJob);
-//         // if (res?.isSuccess) {
-//         //     toast.success('Job added successfully');
-//         //     return navigate('/jobs');
-//         // }
-//         // else {
-//         //     alert(res?.errorMessage);
-//         // }
-//     };
+        if (response.isSuccess) {
+            toast.success("Update job successfully");
+            return navigate("/jobs");
+        } else {
+            toast.error(response?.errorMessage);
+        }
+    };
 
-    
+    return (<>
+        {loading ? (
+            <div className="flex justify-center items-center h-full">
+                <CircularProgress />
+            </div>
+        ) : (
+            <section className='bg-indigo-50'>
+                <div className='container m-auto max-w-2xl py-24'>
+                    <div className='bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0'>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <h2 className='text-3xl text-center font-semibold mb-6'>Edit Job</h2>
+                            <div className="mb-4">
+                                <Controller
+                                    name="title"
+                                    rules={{ required: 'Title is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Title"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
 
-//     return (<>
-//         <section className='bg-indigo-50'>
-//             <div className='container m-auto max-w-2xl py-24'>
-//                 <div className='bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0'>
-//                     <form onSubmit={submitForm}>
-//                         <h2 className='text-3xl text-center font-semibold mb-6'>Add Job</h2>
+                            <div className="mb-4">
+                                <Controller
+                                    name="description"
+                                    rules={{ required: 'Description is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            multiline
+                                            rows={4}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Description"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
 
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='type'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Job Type
-//                             </label>
-//                             <select
-//                                 id='type'
-//                                 name='type'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 required
-//                                 value={type}
-//                                 onChange={(e) => setType(parseInt(e.target.value))}
-//                             >
-//                                 {options.map((option) => (
-//                                     <option key={option.value} value={option.value}>
-//                                         {option.label}
-//                                     </option>
-//                                 ))}
-//                             </select>
-//                         </div>
+                            <div className="mb-4">
+                                <Controller
+                                    name="salary"
+                                    rules={{ required: 'Salary is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="salary-select-label">Salary</InputLabel>
+                                                <Select
+                                                    labelId="salary-select-label"
+                                                    value={value}
+                                                    label="Salary"
+                                                    fullWidth
+                                                    onChange={onChange}
+                                                >
+                                                    <MenuItem value=''>None</MenuItem>
+                                                    <MenuItem value='Under $50K'>Under $50K</MenuItem>
+                                                    <MenuItem value='$50K - 60K'>$50K - $60K</MenuItem>
+                                                    <MenuItem value='$60K - 70K'>$60K - $70K</MenuItem>
+                                                    <MenuItem value='$70K - 80K'>$70K - $80K</MenuItem>
+                                                    <MenuItem value='$80K - 90K'>$80K - $90K</MenuItem>
+                                                    <MenuItem value='$90K - 100K'>$90K - $100K</MenuItem>
+                                                    <MenuItem value='$100K - 125K'>$100K - $125K</MenuItem>
+                                                    <MenuItem value='$125K - 150K'>$125K - $150K</MenuItem>
+                                                    <MenuItem value='$150K - 175K'>$150K - $175K</MenuItem>
+                                                    <MenuItem value='$175K - 200K'>$175K - $200K</MenuItem>
+                                                    <MenuItem value='Over $200K'>Over $200K</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </>
 
-//                         <div className='mb-4'>
-//                             <label className='block text-gray-700 font-bold mb-2'>
-//                                 Job Listing Name
-//                             </label>
-//                             <input
-//                                 type='text'
-//                                 id='title'
-//                                 name='title'
-//                                 className='border rounded w-full py-2 px-3 mb-2'
-//                                 placeholder='eg. Beautiful Apartment In Miami'
-//                                 required
-//                                 value={title}
-//                                 onChange={(e) => setTitle(e.target.value)}
-//                             />
-//                         </div>
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='description'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Description
-//                             </label>
-//                             <textarea
-//                                 id='description'
-//                                 name='description'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 rows={4}
-//                                 placeholder='Add any job duties, expectations, requirements, etc'
-//                                 value={description}
-//                                 onChange={(e) => setDescription(e.target.value)}
-//                             ></textarea>
-//                         </div>
+                                    )}
+                                />
+                            </div>
 
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='type'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Salary
-//                             </label>
-//                             <select
-//                                 id='salary'
-//                                 name='salary'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 required
-//                                 value={salary}
-//                                 onChange={(e) => setSalary(e.target.value)}
-//                             >
-//                                 <option value='Under $50K'>Under $50K</option>
-//                                 <option value='$50K - 60K'>$50K - $60K</option>
-//                                 <option value='$60K - 70K'>$60K - $70K</option>
-//                                 <option value='$70K - 80K'>$70K - $80K</option>
-//                                 <option value='$80K - 90K'>$80K - $90K</option>
-//                                 <option value='$90K - 100K'>$90K - $100K</option>
-//                                 <option value='$100K - 125K'>$100K - $125K</option>
-//                                 <option value='$125K - 150K'>$125K - $150K</option>
-//                                 <option value='$150K - 175K'>$150K - $175K</option>
-//                                 <option value='$175K - 200K'>$175K - $200K</option>
-//                                 <option value='Over $200K'>Over $200K</option>
-//                             </select>
-//                         </div>
+                            <div className="mb-4">
+                                <Controller
+                                    name="type"
+                                    rules={{ required: 'Job Type is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="job-type-select-label">Type</InputLabel>
+                                                <Select
+                                                    labelId="job-type-select-label"
+                                                    value={value}
+                                                    label="Type"
+                                                    fullWidth
+                                                    onChange={onChange}
+                                                >
+                                                    {options.map((option) => (
+                                                        <MenuItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </>
 
-//                         <div className='mb-4'>
-//                             <label className='block text-gray-700 font-bold mb-2'>
-//                                 Location
-//                             </label>
-//                             <input
-//                                 type='text'
-//                                 id='location'
-//                                 name='location'
-//                                 className='border rounded w-full py-2 px-3 mb-2'
-//                                 placeholder='Company Location'
-//                                 required
-//                                 value={location}
-//                                 onChange={(e) => setLocation(e.target.value)}
-//                             />
-//                         </div>
+                                    )}
+                                />
+                            </div>
 
-//                         <h3 className='text-2xl mb-5'>Company Info</h3>
 
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='company'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Company Name
-//                             </label>
-//                             <input
-//                                 type='text'
-//                                 id='company'
-//                                 name='company'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 placeholder='Company Name'
-//                                 value={companyName}
-//                                 onChange={(e) => setCompanyName(e.target.value)}
-//                             />
-//                         </div>
+                            <div className="mb-4">
+                                <Controller
+                                    name="location"
+                                    rules={{ required: 'Location is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Location"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
 
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='company_description'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Company Description
-//                             </label>
-//                             <textarea
-//                                 id='company_description'
-//                                 name='company_description'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 rows={4}
-//                                 placeholder='What does your company do?'
-//                                 value={companyDescription}
-//                                 onChange={(e) => setCompanyDescription(e.target.value)}
-//                             ></textarea>
-//                         </div>
+                            <h3 className='text-2xl mb-5'>Company Info</h3>
 
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='contact_email'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Contact Email
-//                             </label>
-//                             <input
-//                                 type='email'
-//                                 id='contact_email'
-//                                 name='contact_email'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 placeholder='Email address for applicants'
-//                                 required
-//                                 value={email}
-//                                 onChange={(e) => setContactEmail(e.target.value)}
-//                             />
-//                         </div>
-//                         <div className='mb-4'>
-//                             <label
-//                                 htmlFor='contact_phone'
-//                                 className='block text-gray-700 font-bold mb-2'
-//                             >
-//                                 Contact Phone
-//                             </label>
-//                             <input
-//                                 type='tel'
-//                                 id='contact_phone'
-//                                 name='contact_phone'
-//                                 className='border rounded w-full py-2 px-3'
-//                                 placeholder='Optional phone for applicants'
-//                                 value={phone}
-//                                 onChange={(e) => setContactPhone(e.target.value)}
-//                             />
-//                         </div>
+                            <div className="mb-4">
+                                <Controller
+                                    name="company.name"
+                                    rules={{ required: 'Company name is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Company name"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
 
-//                         <div>
-//                             <button
-//                                 className='bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline'
-//                                 type='submit'
-//                             >
-//                                 Add Job
-//                             </button>
-//                         </div>
-//                     </form>
-//                 </div>
-//             </div>
-//         </section>
-//     </>)
-// }
-// export default EditJobPage
+                            <div className="mb-4">
+                                <Controller
+                                    name="company.description"
+                                    rules={{ required: 'Company description is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Company description"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <Controller
+                                    name="company.email"
+                                    rules={{ required: 'Company email is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Contact email"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <Controller
+                                    name="company.phone"
+                                    rules={{ required: 'Company phone is required' }}
+                                    control={control}
+                                    render={({
+                                        field: { onChange, value },
+                                        fieldState: { error },
+                                    }) => (
+                                        <TextField
+                                            helperText={error ? error.message : null}
+                                            error={!!error}
+                                            onChange={onChange}
+                                            value={value}
+                                            fullWidth
+                                            label="Contact phone"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+
+                            <div>
+                                <button
+                                    className='bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline'
+                                    type='submit'
+                                >
+                                    Edit Job
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        )}
+    </>)
+}
+export default EditJobPage

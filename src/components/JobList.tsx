@@ -1,9 +1,9 @@
 
 import JobCard from "./JobCard";
 import { useEffect, useState } from "react";
-import { GetJobs } from "../pages/jobs/job.api";
 import { Job } from "../data/job";
 import { Box, CircularProgress } from "@mui/material";
+import { GetJobsAsync } from "../services/job.api";
 
 function JobList({ isHome }: { isHome: boolean }) {
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -13,7 +13,7 @@ function JobList({ isHome }: { isHome: boolean }) {
         const fetchJobs = async () => {
             try {
                 const pageSize = isHome ? 3 : 10;
-                const res = await GetJobs(pageSize, 1);
+                const res = await GetJobsAsync(pageSize, 1);
                 if (res?.isSuccess)
                     setJobs(res?.data);
                 else

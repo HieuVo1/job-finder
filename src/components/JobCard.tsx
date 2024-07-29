@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { Job } from "../data/job"
+import { Job, JobTypes } from "../data/job"
 import { useState } from "react"
 
 function JobCard(job: Job) {
@@ -10,11 +10,13 @@ function JobCard(job: Job) {
         description = description.substring(0, 90) + '...';
     }
 
+    const JobTypeStrings = Object.values(JobTypes);
+
     return (
         <div className='bg-white rounded-xl shadow-md relative'>
             <div className='p-4'>
                 <div className='mb-6'>
-                    <div className='text-gray-600 my-2'>{job.type}</div>
+                    <div className='text-gray-600 my-2'>{JobTypeStrings[job.type]}</div>
                     <h3 className='text-xl font-bold'>{job.title}</h3>
                 </div>
 

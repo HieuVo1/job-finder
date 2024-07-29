@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Blog } from "../../../data/blog";
-import { getBlogByIdAsync } from "../blog.api";
 import { CircularProgress } from "@mui/material";
+import { Blog } from "../../data/blog";
+import { getBlogByIdAsync } from "../../services/blog.api";
 
 function BlogDetail() {
   const { blogId } = useParams();

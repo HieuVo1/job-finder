@@ -1,5 +1,5 @@
-import BlogList from "./blogs-list/BlogList";
-import SideBar from "./side-bar/BlogSideBar";
+import BlogList from "../../components/Blogs/BlogList";
+import SideBar from "../../components/Blogs/SideBar";
 
 function BlogsPage() {
   return (
